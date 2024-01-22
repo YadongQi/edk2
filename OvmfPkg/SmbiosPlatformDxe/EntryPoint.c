@@ -28,24 +28,12 @@ SmbiosTablePublishEntry (
 {
   EFI_STATUS  Status;
   UINT8       *SmbiosTables;
-  UINT16      HostBridgeDevId;
 
+  // TODO(b/236184260): Add conditional back once we can reliably identify crosvm.
   Status = EFI_NOT_FOUND;
-  //
-  // Add SMBIOS data if found
-  //
-  HostBridgeDevId = PcdGet16 (PcdOvmfHostBridgePciDevId);
-  if (HostBridgeDevId == CLOUDHV_DEVICE_ID) {
-    SmbiosTables = GetCloudHvSmbiosTables ();
-    if (SmbiosTables != NULL) {
-      Status = InstallAllStructures (SmbiosTables);
-    }
-  } else {
-    SmbiosTables = GetQemuSmbiosTables ();
-    if (SmbiosTables != NULL) {
-      Status = InstallAllStructures (SmbiosTables);
-      FreePool (SmbiosTables);
-    }
+  SmbiosTables = GetCloudHvSmbiosTables ();
+  if (SmbiosTables != NULL) {
+    Status = InstallAllStructures (SmbiosTables);
   }
 
   return Status;

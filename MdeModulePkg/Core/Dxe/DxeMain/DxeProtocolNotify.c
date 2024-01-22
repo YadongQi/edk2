@@ -31,7 +31,8 @@ EFI_CORE_PROTOCOL_NOTIFY_ENTRY  mArchProtocols[] = {
   { &gEfiCapsuleArchProtocolGuid,          (VOID **)NULL,            NULL, NULL, FALSE },
   { &gEfiMonotonicCounterArchProtocolGuid, (VOID **)NULL,            NULL, NULL, FALSE },
   { &gEfiResetArchProtocolGuid,            (VOID **)NULL,            NULL, NULL, FALSE },
-  { &gEfiRealTimeClockArchProtocolGuid,    (VOID **)NULL,            NULL, NULL, FALSE },
+  // TODO(b/235855065): get the RTC working properly
+  //{ &gEfiRealTimeClockArchProtocolGuid,    (VOID **)NULL,            NULL, NULL, FALSE },
   { NULL,                                  (VOID **)NULL,            NULL, NULL, FALSE }
 };
 

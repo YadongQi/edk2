@@ -127,7 +127,7 @@
 
 [LibraryClasses]
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/BaseAcpiTimerLib.inf
+  TimerLib|MdePkg/Library/SecPeiDxeTimerLibCpu/SecPeiDxeTimerLibCpu.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/BaseResetSystemLib.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRepStr.inf
@@ -248,7 +248,6 @@
   TdxMailboxLib|OvmfPkg/Library/TdxMailboxLib/TdxMailboxLibNull.inf
 
 [LibraryClasses.common.SEC]
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/BaseRomAcpiTimerLib.inf
 !ifdef $(DEBUG_ON_SERIAL_PORT)
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !else
@@ -331,7 +330,6 @@
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
@@ -352,7 +350,6 @@
 
 [LibraryClasses.common.UEFI_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
@@ -369,7 +366,6 @@
 [LibraryClasses.common.DXE_DRIVER]
   AcpiPlatformLib|OvmfPkg/Library/AcpiPlatformLib/DxeAcpiPlatformLib.inf
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
@@ -400,7 +396,6 @@
 
 [LibraryClasses.common.UEFI_APPLICATION]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
@@ -414,7 +409,6 @@
 
 [LibraryClasses.common.DXE_SMM_DRIVER]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
   MemoryAllocationLib|MdePkg/Library/SmmMemoryAllocationLib/SmmMemoryAllocationLib.inf
   ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
@@ -437,7 +431,6 @@
 
 [LibraryClasses.common.SMM_CORE]
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  TimerLib|OvmfPkg/Library/AcpiTimerLib/DxeAcpiTimerLib.inf
   ResetSystemLib|OvmfPkg/Library/ResetSystemLib/DxeResetSystemLib.inf
   SmmCorePlatformHookLib|MdeModulePkg/Library/SmmCorePlatformHookLibNull/SmmCorePlatformHookLibNull.inf
   MemoryAllocationLib|MdeModulePkg/Library/PiSmmCoreMemoryAllocationLib/PiSmmCoreMemoryAllocationLib.inf
@@ -635,6 +628,7 @@
 
   # Set ConfidentialComputing defaults
   gEfiMdePkgTokenSpaceGuid.PcdConfidentialComputingGuestAttr|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration|TRUE
 
 [PcdsDynamicHii]
 !include OvmfPkg/Include/Dsc/OvmfTpmPcdsHii.dsc.inc
@@ -726,7 +720,7 @@
   OvmfPkg/PciHotPlugInitDxe/PciHotPlugInit.inf
   MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf {
     <LibraryClasses>
-      PciHostBridgeLib|OvmfPkg/Library/PciHostBridgeLib/PciHostBridgeLib.inf
+      PciHostBridgeLib|OvmfPkg/Library/PciHostBridgeLibScan/PciHostBridgeLibScan.inf
       PciHostBridgeUtilityLib|OvmfPkg/Library/PciHostBridgeUtilityLib/PciHostBridgeUtilityLib.inf
       NULL|OvmfPkg/Library/PlatformHasIoMmuLib/PlatformHasIoMmuLib.inf
   }
@@ -736,7 +730,6 @@
   }
   MdeModulePkg/Universal/ResetSystemRuntimeDxe/ResetSystemRuntimeDxe.inf
   MdeModulePkg/Universal/Metronome/Metronome.inf
-  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
   MdeModulePkg/Universal/BdsDxe/BdsDxe.inf {
     <LibraryClasses>
@@ -788,7 +781,6 @@
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
   MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
-  OvmfPkg/VirtioFsDxe/VirtioFsDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   MdeModulePkg/Bus/Pci/SataControllerDxe/SataControllerDxe.inf

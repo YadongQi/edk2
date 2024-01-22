@@ -467,9 +467,9 @@ PlatformBootManagerBeforeConsole (
   // rely on the serial I/O port to be connected as a console. It reuses the
   // definition from Xen as it is very generic.
   //
-  PlatformInitializeConsole (
-    (XenDetected () || PcdGet16 (PcdOvmfHostBridgePciDevId) == CLOUDHV_DEVICE_ID) ? gXenPlatformConsole : gPlatformConsole
-    );
+  // TODO(b/236184260): Add conditional back once we can reliably identify
+  // crosvm.
+  PlatformInitializeConsole(gXenPlatformConsole);
 
   //
   // Process TPM PPI request; this may require keyboard input

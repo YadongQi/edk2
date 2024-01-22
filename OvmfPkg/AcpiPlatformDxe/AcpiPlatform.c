@@ -31,19 +31,7 @@ InstallAcpiTables (
   IN   EFI_ACPI_TABLE_PROTOCOL  *AcpiTable
   )
 {
-  EFI_STATUS  Status;
-  UINT16      HostBridgeDevId;
-
-  HostBridgeDevId = PcdGet16 (PcdOvmfHostBridgePciDevId);
-  if (HostBridgeDevId == CLOUDHV_DEVICE_ID) {
-    if (CC_GUEST_IS_TDX (PcdGet64 (PcdConfidentialComputingGuestAttr))) {
-      Status = InstallCloudHvTablesTdx (AcpiTable);
-    } else {
-      Status = InstallCloudHvTables (AcpiTable);
-    }
-  } else {
-    Status = InstallQemuFwCfgTables (AcpiTable);
-  }
-
-  return Status;
+  // TODO(b/236184260): Add conditional back once we can reliably identify
+  // crosvm.
+  return InstallCloudHvTables(AcpiTable);
 }

@@ -42,8 +42,9 @@ typedef struct {
 //
 #define CHAR_BACKSPACE        0x0008
 #define CHAR_TAB              0x0009
-#define CHAR_LINEFEED         0x000A
-#define CHAR_CARRIAGE_RETURN  0x000D
+// TODO(b/236185272): Figure out why we need to swap CR and LF.
+#define CHAR_LINEFEED         0x000D
+#define CHAR_CARRIAGE_RETURN  0x000A
 
 //
 // EFI Scan codes
