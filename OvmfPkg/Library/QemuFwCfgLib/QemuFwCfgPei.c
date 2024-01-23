@@ -64,6 +64,7 @@ QemuFwCfgProbe (
   BOOLEAN  *DmaSupported
   )
 {
+#if 0
   UINT32   Signature;
   UINT32   Revision;
   BOOLEAN  CcGuest;
@@ -91,6 +92,47 @@ QemuFwCfgProbe (
     *Supported,
     *DmaSupported
     ));
+#endif
+  UINT32  Signature;
+  UINT32  Revision;
+  BOOLEAN  CcGuest;
+
+  //
+  // Enable the access routines while probing to see if it is supported.
+  // For probing we always use the IO Port (IoReadFifo8()) access method.
+  //
+  *Supported    = TRUE;
+  *DmaSupported = FALSE;
+
+  QemuFwCfgSelectItem (QemuFwCfgItemSignature);
+  DEBUG ((DEBUG_INFO, "QemuFwCfgSelectItem: selected=0x%x, sizeof(Signature)=%d\n", QemuFwCfgItemSignature, sizeof Signature));
+  DEBUG ((DEBUG_INFO, "%c-%c-%c-%c\n", IoRead8(FW_CFG_IO_DATA), IoRead8(FW_CFG_IO_DATA), IoRead8(FW_CFG_IO_DATA), IoRead8(FW_CFG_IO_DATA)));
+  //Signature = QemuFwCfgRead32 ();
+  QemuFwCfgSelectItem (QemuFwCfgItemSignature);
+  IoReadFifo8 (FW_CFG_IO_DATA, sizeof Signature, &Signature);
+  DEBUG ((DEBUG_INFO, "FW CFG Signature: 0x%x\n", Signature));
+  QemuFwCfgSelectItem (QemuFwCfgItemInterfaceVersion);
+  //Revision = QemuFwCfgRead32 ();
+  IoReadFifo8 (FW_CFG_IO_DATA, sizeof Revision, &Revision);
+  DEBUG ((DEBUG_INFO, "FW CFG Revision: 0x%x\n", Revision));
+  if ((Signature != SIGNATURE_32 ('Q', 'E', 'M', 'U')) ||
+      (Revision < 1)
+      )
+  {
+    DEBUG ((DEBUG_INFO, "QemuFwCfg interface not supported.\n"));
+    *Supported = FALSE;
+    return;
+  }
+
+  CcGuest = QemuFwCfgIsCcGuest ();
+
+  if (Revision >= 1) {
+    *Supported = TRUE;
+    if ((Revision & FW_CFG_F_DMA) && !CcGuest) {
+      *DmaSupported = TRUE;
+    }
+  }
+
 }
 
 STATIC

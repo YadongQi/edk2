@@ -263,7 +263,9 @@ MaxCpuCountInitialization (
 {
   RETURN_STATUS  PcdStatus;
 
+  DEBUG ((DEBUG_INFO, "%a: MaxCpuCountInitialization enter\n", __func__));
   PlatformMaxCpuCountInitialization (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: PlatformMaxCpuCountInitialization done\n", __func__));
 
   PcdStatus = PcdSet32S (PcdCpuBootLogicalProcessorNumber, PlatformInfoHob->PcdCpuBootLogicalProcessorNumber);
   ASSERT_RETURN_ERROR (PcdStatus);
@@ -305,9 +307,9 @@ InitializePlatform (
   )
 {
   EFI_HOB_PLATFORM_INFO  *PlatformInfoHob;
-  EFI_STATUS             Status;
+  //EFI_STATUS             Status;
 
-  DEBUG ((DEBUG_INFO, "Platform PEIM Loaded\n"));
+  DEBUG ((DEBUG_INFO, "PPlatform PEIM Loaded\n"));
   PlatformInfoHob = BuildPlatformInfoHob ();
 
   PlatformInfoHob->SmmSmramRequire     = FeaturePcdGet (PcdSmmSmramRequire);
@@ -316,7 +318,9 @@ InitializePlatform (
   PlatformInfoHob->DefaultMaxCpuNumber = PcdGet32 (PcdCpuMaxLogicalProcessorNumber);
 
   PlatformDebugDumpCmos ();
+  DEBUG ((DEBUG_INFO, "%a: PlatformDebugDumpCmos done\n", __func__));
 
+#if 0
   if (QemuFwCfgS3Enabled ()) {
     DEBUG ((DEBUG_INFO, "S3 support was detected on QEMU\n"));
     PlatformInfoHob->S3Supported = TRUE;
@@ -324,15 +328,21 @@ InitializePlatform (
     ASSERT_EFI_ERROR (Status);
   }
 
+  DEBUG ((DEBUG_INFO, "%a: QemuFwCfgS3Enabled()=%d\n", __func__, QemuFwCfgS3Enabled ()));
+#endif
   BootModeInitialization (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: BootModeInitialization done\n", __func__));
 
   //
   // Query Host Bridge DID
   //
   PlatformInfoHob->HostBridgeDevId = PciRead16 (OVMF_HOSTBRIDGE_DID);
+  DEBUG ((DEBUG_INFO, "%a: PlatformInfoHob->HostBridgeDevId=0x%x done\n", __func__, PlatformInfoHob->HostBridgeDevId));
   AddressWidthInitialization (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: AddressWidthInitialization done\n", __func__));
 
   MaxCpuCountInitialization (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: MaxCpuCountInitialization done\n", __func__));
 
   if (PlatformInfoHob->SmmSmramRequire) {
     Q35BoardVerification (PlatformInfoHob);
@@ -341,10 +351,13 @@ InitializePlatform (
   }
 
   PublishPeiMemory (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: PublishPeiMemory done\n", __func__));
 
   PlatformQemuUc32BaseInitialization (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: PlatformQemuUc32BaseInitialization done\n", __func__));
 
   InitializeRamRegions (PlatformInfoHob);
+  DEBUG ((DEBUG_INFO, "%a: InitializeRamRegions done\n", __func__));
 
   if (PlatformInfoHob->BootMode != BOOT_ON_S3_RESUME) {
     if (!PlatformInfoHob->SmmSmramRequire) {

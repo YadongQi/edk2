@@ -340,7 +340,7 @@ PlatformScanE820 (
   EFI_E820_ENTRY64      E820Entry;
   UINTN                 Processed;
 
-  if (PlatformInfoHob->HostBridgeDevId == CLOUDHV_DEVICE_ID) {
+  if (PlatformInfoHob->HostBridgeDevId == CLOUDHV_DEVICE_ID || (PlatformInfoHob->HostBridgeDevId == 0x1237)) {
     return PlatformScanE820Pvh (Callback, PlatformInfoHob);
   }
 
@@ -874,15 +874,18 @@ PlatformAddressWidthInitialization (
   if (PlatformInfoHob->HostBridgeDevId == 0xffff /* microvm */) {
     PlatformAddressWidthFromCpuid (PlatformInfoHob, FALSE);
     return;
-  } else if (PlatformInfoHob->HostBridgeDevId == CLOUDHV_DEVICE_ID) {
+  } else if (PlatformInfoHob->HostBridgeDevId == CLOUDHV_DEVICE_ID || (PlatformInfoHob->HostBridgeDevId == 0x1237)) {
+    DEBUG ((DEBUG_INFO, "%a: PlatformInfoHob->HostBridgeDevId=0x%x\n", __func__, PlatformInfoHob->HostBridgeDevId));
     PlatformInfoHob->FirstNonAddress = BASE_4GB;
     Status                           = PlatformScanE820 (PlatformGetFirstNonAddressCB, PlatformInfoHob);
+    DEBUG ((DEBUG_INFO, "%a: PlatformScanE820.Status=0x%x\n", __func__, Status));
     if (EFI_ERROR (Status)) {
       PlatformInfoHob->FirstNonAddress = BASE_4GB + PlatformGetSystemMemorySizeAbove4gb ();
     }
 
     PlatformInfoHob->PcdPciMmio64Base = PlatformInfoHob->FirstNonAddress;
     PlatformAddressWidthFromCpuid (PlatformInfoHob, FALSE);
+    DEBUG ((DEBUG_INFO, "%a: PlatformAddressWidthFromCpuid done\n", __func__));
     PlatformInfoHob->PcdPciMmio64Size = PlatformInfoHob->FirstNonAddress - PlatformInfoHob->PcdPciMmio64Base;
 
     return;

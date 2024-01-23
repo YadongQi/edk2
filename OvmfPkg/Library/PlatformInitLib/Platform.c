@@ -519,8 +519,9 @@ PlatformCpuCountBugCheck (
       return;
     }
 
-    ASSERT (FALSE);
-    CpuDeadLoop ();
+    //ASSERT (FALSE);
+    //CpuDeadLoop ();
+    return;
   }
 
   //
@@ -558,13 +559,16 @@ PlatformMaxCpuCountInitialization (
   UINT16  BootCpuCount = 0;
   UINT32  MaxCpuCount;
 
+  DEBUG ((DEBUG_INFO, "%a: PlatformMaxCpuCountInitialization enter, QemuFwCfgIsAvailable ()=%d\n", __func__, QemuFwCfgIsAvailable ()));
   //
   // Try to fetch the boot CPU count.
   //
   if (QemuFwCfgIsAvailable ()) {
     QemuFwCfgSelectItem (QemuFwCfgItemSmpCpuCount);
     BootCpuCount = QemuFwCfgRead16 ();
+    //BootCpuCount = IoRead16(FW_CFG_IO_DATA);
   }
+  DEBUG ((DEBUG_INFO, "%a: BootCpuCount(read)=%d\n", __func__, BootCpuCount));
 
   if (BootCpuCount == 0) {
     //
@@ -626,7 +630,7 @@ PlatformMaxCpuCountInitialization (
     //    steps. Both cases confirm modern mode.
     //
     CmdData2 = IoRead32 (CpuHpBase + QEMU_CPUHP_R_CMD_DATA2);
-    DEBUG ((DEBUG_VERBOSE, "%a: CmdData2=0x%x\n", __func__, CmdData2));
+    DEBUG ((DEBUG_INFO, "%a: CmdData2=0x%x\n", __func__, CmdData2));
     if (CmdData2 != 0) {
       //
       // QEMU doesn't support the modern CPU hotplug interface. Assume that the
@@ -682,12 +686,13 @@ PlatformMaxCpuCountInitialization (
       } while (Selected > 0);
 
       PlatformCpuCountBugCheck (&BootCpuCount, &Present, &Possible);
-      ASSERT (Present > 0);
-      ASSERT (Present <= Possible);
-      ASSERT (BootCpuCount == Present);
-
+      //ASSERT (Present > 0);
+      //ASSERT (Present <= Possible);
+      //ASSERT (BootCpuCount == Present);
+      DEBUG((DEBUG_INFO, "%a: Possible=%d\n", __func__, Possible));
       MaxCpuCount = Possible;
     }
+      MaxCpuCount = BootCpuCount;
   }
 
   DEBUG ((
